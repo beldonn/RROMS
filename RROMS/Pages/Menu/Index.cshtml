@@ -1,0 +1,110 @@
+@page
+@model RROMS.Pages.Menu.IndexModel
+@{
+    ViewData["Title"] = "Menu";
+}
+
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+    <div>
+        <p class="rroms-section-eyebrow mb-1">Our menu</p>
+        <h1 class="h3 mb-0">Browse &amp; order</h1>
+    </div>
+    <a asp-page="/Orders/Cart" class="btn btn-primary">
+        <i class="bi bi-basket3"></i> Cart @(Model.CartItemCount > 0 ? $"({Model.CartItemCount})" : "")
+    </a>
+</div>
+
+<form method="get" class="rroms-card p-3 mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small">Search</label>
+            <input type="text" name="Search" value="@Model.Search" class="form-control" placeholder="Search dishes..." />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label small">Category</label>
+            <select name="CategoryId" class="form-select" onchange="this.form.submit()">
+                <option value="">All categories</option>
+                @foreach (var c in Model.Categories)
+                {
+                    <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3 form-check mt-4">
+            <input type="checkbox" class="form-check-input" name="VegetarianOnly" value="true" id="vegOnly" checked="@Model.VegetarianOnly" onchange="this.form.submit()" />
+            <label class="form-check-label" for="vegOnly">Vegetarian only</label>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-outline-primary w-100">Go</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Recommended.Any())
+{
+    <section class="mb-4">
+        <p class="rroms-section-eyebrow mb-1">Just for you</p>
+        <h2 class="h5 mb-3">Recommended dishes</h2>
+        <div class="row g-3">
+            @foreach (var item in Model.Recommended)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <div class="menu-item-card">
+                        <div class="item-name">@item.Name</div>
+                        <div class="price">@item.Price.ToString("C")</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+    <hr class="rroms-divider" />
+}
+
+@if (!Model.Items.Any())
+{
+    <div class="rroms-card p-5 text-center text-muted-warm">No dishes match your filters right now.</div>
+}
+
+@foreach (var categoryGroup in Model.Items.GroupBy(i => i.MenuCategory!.Name))
+{
+    <section class="mb-4">
+        <h2 class="h5 mb-3">@categoryGroup.Key</h2>
+        <div class="row g-3">
+            @foreach (var item in categoryGroup)
+            {
+                var hasDiscount = Model.ActivePromotionDiscounts.TryGetValue(item.Id, out var discountPercent);
+                var displayPrice = hasDiscount ? Math.Round(item.Price * (1 - discountPercent / 100m), 2) : item.Price;
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-item-card d-flex flex-column">
+                        <div class="d-flex justify-content-between">
+                            <div class="item-name">@item.Name</div>
+                            <div class="text-end">
+                                @if (hasDiscount)
+                                {
+                                    <div class="small text-decoration-line-through text-muted-warm">@item.Price.ToString("C")</div>
+                                    <div class="price">@displayPrice.ToString("C")</div>
+                                }
+                                else
+                                {
+                                    <div class="price">@item.Price.ToString("C")</div>
+                                }
+                            </div>
+                        </div>
+                        <p class="small text-muted-warm flex-grow-1">@item.Description</p>
+                        <div class="mb-2">
+                            @if (item.IsVegetarian) { <span class="menu-tag veg">Vegetarian</span> }
+                            @if (item.IsSpicy) { <span class="menu-tag spicy">Spicy</span> }
+                            @if (item.Calories.HasValue) { <span class="menu-tag">@item.Calories kcal</span> }
+                            @if (hasDiscount) { <span class="menu-tag" style="border-color:var(--gold);color:var(--gold-dark);">@discountPercent% off</span> }
+                        </div>
+                        <form method="post" asp-page-handler="AddToCart" class="d-flex gap-2">
+                            <input type="hidden" name="menuItemId" value="@item.Id" />
+                            <input type="number" name="quantity" value="1" min="1" max="20" class="form-control form-control-sm" style="width:70px;" />
+                            <button type="submit" class="btn btn-sm btn-primary flex-grow-1">Add to cart</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}

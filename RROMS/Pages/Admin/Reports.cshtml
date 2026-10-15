@@ -1,0 +1,129 @@
+@page
+@model RROMS.Pages.Admin.ReportsModel
+@{
+    ViewData["Title"] = "Reports";
+
+    string ExportUrl(string report, string format) =>
+        Url.Page("/Admin/Reports", "Export", new { report, format, startDate = Model.StartDate.ToString("yyyy-MM-dd"), endDate = Model.EndDate.ToString("yyyy-MM-dd") }) ?? "#";
+}
+<h1 class="h3 mb-4">Reports</h1>
+
+<form method="get" class="rroms-card p-3 mb-4">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">From</label>
+            <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">To</label>
+            <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-md-5">
+            <label class="form-label small">Quick range</label>
+            <div class="btn-group w-100" role="group">
+                <a class="btn btn-outline-primary btn-sm" href="?StartDate=@DateTime.Today.ToString("yyyy-MM-dd")&EndDate=@DateTime.Today.ToString("yyyy-MM-dd")">Today</a>
+                <a class="btn btn-outline-primary btn-sm" href="?StartDate=@DateTime.Today.AddDays(-6).ToString("yyyy-MM-dd")&EndDate=@DateTime.Today.ToString("yyyy-MM-dd")">Last 7 days</a>
+                <a class="btn btn-outline-primary btn-sm" href="?StartDate=@DateTime.Today.AddDays(-29).ToString("yyyy-MM-dd")&EndDate=@DateTime.Today.ToString("yyyy-MM-dd")">Last 30 days</a>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary w-100">Go</button>
+        </div>
+    </div>
+</form>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#salesTab">Sales</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#popularTab">Popular Items</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#resStatsTab">Reservation Stats</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#custTab">Customer Activity</button></li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="salesTab">
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3"><div class="rroms-stat-card"><div class="stat-value">@Model.Sales.TotalOrders</div><div class="stat-label">Orders</div></div></div>
+            <div class="col-6 col-md-3"><div class="rroms-stat-card"><div class="stat-value">@Model.Sales.TotalRevenue.ToString("C")</div><div class="stat-label">Revenue</div></div></div>
+            <div class="col-6 col-md-3"><div class="rroms-stat-card"><div class="stat-value">@Model.Sales.TotalTax.ToString("C")</div><div class="stat-label">Tax collected</div></div></div>
+            <div class="col-6 col-md-3"><div class="rroms-stat-card"><div class="stat-value">@Model.Sales.AverageOrderValue.ToString("C")</div><div class="stat-label">Avg order value</div></div></div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mb-2">
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("sales","csv")">Export CSV</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("sales","pdf")">Export PDF</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("sales","excel")">Export Excel</a>
+        </div>
+        <div class="table-responsive rroms-card p-2">
+            <table class="table rroms-table mb-0"><thead><tr><th>Date</th><th>Orders</th><th>Revenue</th></tr></thead>
+                <tbody>@foreach (var d in Model.Sales.DailyBreakdown)
+                    {<tr><td>@d.Date.ToString("dd MMM yyyy")</td><td>@d.OrderCount</td><td>@d.Revenue.ToString("C")</td></tr>}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="popularTab">
+        <div class="d-flex justify-content-end gap-2 mb-2">
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("popular","csv")">Export CSV</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("popular","pdf")">Export PDF</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("popular","excel")">Export Excel</a>
+        </div>
+        <div class="table-responsive rroms-card p-2">
+            <table class="table rroms-table mb-0"><thead><tr><th>Item</th><th>Category</th><th>Qty sold</th><th>Revenue</th></tr></thead>
+                <tbody>@foreach (var p in Model.PopularItems)
+                    {<tr><td>@p.Name</td><td>@p.Category</td><td>@p.QuantitySold</td><td>@p.RevenueGenerated.ToString("C")</td></tr>}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="resStatsTab">
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-2"><div class="rroms-stat-card"><div class="stat-value">@Model.ReservationStats.TotalReservations</div><div class="stat-label">Total</div></div></div>
+            <div class="col-6 col-md-2"><div class="rroms-stat-card"><div class="stat-value">@Model.ReservationStats.Confirmed</div><div class="stat-label">Confirmed</div></div></div>
+            <div class="col-6 col-md-2"><div class="rroms-stat-card"><div class="stat-value">@Model.ReservationStats.Completed</div><div class="stat-label">Completed</div></div></div>
+            <div class="col-6 col-md-2"><div class="rroms-stat-card"><div class="stat-value">@Model.ReservationStats.Cancelled</div><div class="stat-label">Cancelled</div></div></div>
+            <div class="col-6 col-md-2"><div class="rroms-stat-card"><div class="stat-value">@Model.ReservationStats.NoShow</div><div class="stat-label">No-shows</div></div></div>
+            <div class="col-6 col-md-2"><div class="rroms-stat-card"><div class="stat-value">@Model.ReservationStats.AveragePartySize</div><div class="stat-label">Avg party size</div></div></div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 mb-2">
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("reservations","csv")">Export CSV</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("reservations","pdf")">Export PDF</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("reservations","excel")">Export Excel</a>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="table-responsive rroms-card p-2">
+                    <table class="table rroms-table mb-0"><thead><tr><th>Hour</th><th>Reservations</th></tr></thead>
+                        <tbody>@foreach (var h in Model.ReservationStats.ByHour)
+                            {<tr><td>@h.Hour:00</td><td>@h.Count</td></tr>}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="table-responsive rroms-card p-2">
+                    <table class="table rroms-table mb-0"><thead><tr><th>Table</th><th>Bookings</th></tr></thead>
+                        <tbody>@foreach (var t in Model.ReservationStats.ByTable)
+                            {<tr><td>@t.TableNumber</td><td>@t.BookingCount</td></tr>}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="custTab">
+        <div class="d-flex justify-content-end gap-2 mb-2">
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("customers","csv")">Export CSV</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("customers","pdf")">Export PDF</a>
+            <a class="btn btn-sm btn-outline-primary" href="@ExportUrl("customers","excel")">Export Excel</a>
+        </div>
+        <div class="table-responsive rroms-card p-2">
+            <table class="table rroms-table mb-0"><thead><tr><th>Customer</th><th>Email</th><th>Reservations</th><th>Orders</th><th>Total spent</th><th>Last visit</th></tr></thead>
+                <tbody>@foreach (var c in Model.CustomerActivity)
+                    {<tr><td>@c.FullName</td><td>@c.Email</td><td>@c.ReservationCount</td><td>@c.OrderCount</td><td>@c.TotalSpent.ToString("C")</td><td>@(c.LastVisit?.ToString("dd MMM yyyy") ?? "-")</td></tr>}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

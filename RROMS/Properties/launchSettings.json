@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "RROMS": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53052;http://localhost:53053"
+    }
+  }
+}

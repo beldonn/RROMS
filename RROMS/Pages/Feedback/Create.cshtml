@@ -1,0 +1,49 @@
+@page
+@model RROMS.Pages.Feedback.CreateModel
+@{
+    ViewData["Title"] = "Leave Feedback";
+}
+<h1 class="h3 mb-4">Leave feedback</h1>
+
+<div class="rroms-card p-4" style="max-width:560px;">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Which order was this about? (optional)</label>
+            <select asp-for="Input.OrderId" class="form-select">
+                <option value="">Not order-specific</option>
+                @foreach (var o in Model.CompletedOrders)
+                {
+                    <option value="@o.Id">Order #@o.Id - @o.OrderDate.ToLocalTime().ToString("dd MMM yyyy")</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Which reservation was this about? (optional)</label>
+            <select asp-for="Input.ReservationId" class="form-select">
+                <option value="">Not reservation-specific</option>
+                @foreach (var r in Model.PastReservations)
+                {
+                    <option value="@r.Id">Visit on @r.ReservationDateTime.ToString("dd MMM yyyy")</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Rating</label>
+            <div class="btn-group d-block" role="group">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <input type="radio" class="btn-check" name="Input.Rating" id="rating@(i)" value="@i" autocomplete="off" checked="@(i == 5)" />
+                    <label class="btn btn-outline-primary" for="rating@(i)">@i <i class="bi bi-star-fill"></i></label>
+                }
+            </div>
+        </div>
+        <div class="mb-4">
+            <label asp-for="Input.Comments" class="form-label">Comments</label>
+            <textarea asp-for="Input.Comments" class="form-control" rows="4" placeholder="Tell us about your experience..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Submit feedback</button>
+    </form>
+</div>

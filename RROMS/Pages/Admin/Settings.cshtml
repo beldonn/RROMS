@@ -1,0 +1,50 @@
+@page
+@model RROMS.Pages.Admin.SettingsModel
+@{
+    ViewData["Title"] = "Settings";
+}
+<h1 class="h3 mb-4">Restaurant Settings</h1>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="rroms-card p-4">
+            <h2 class="h5 mb-3">Restaurant profile</h2>
+            <form method="post" asp-page-handler="SaveProfile">
+                <div class="mb-2"><label class="form-label">Name</label><input name="restaurantName" value="@Model.Setting.RestaurantName" class="form-control" required /></div>
+                <div class="mb-2"><label class="form-label">Address</label><input name="address" value="@Model.Setting.Address" class="form-control" /></div>
+                <div class="mb-2"><label class="form-label">Phone</label><input name="phone" value="@Model.Setting.Phone" class="form-control" /></div>
+                <div class="mb-2"><label class="form-label">Email</label><input name="email" value="@Model.Setting.Email" class="form-control" /></div>
+                <div class="mb-2"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3">@Model.Setting.Description</textarea></div>
+                <div class="row g-2">
+                    <div class="col-4"><label class="form-label small">Booking length (min)</label><input type="number" name="reservationDurationMinutes" value="@Model.Setting.ReservationDurationMinutes" class="form-control" /></div>
+                    <div class="col-4"><label class="form-label small">Max advance days</label><input type="number" name="maxAdvanceBookingDays" value="@Model.Setting.MaxAdvanceBookingDays" class="form-control" /></div>
+                    <div class="col-4"><label class="form-label small">Tax rate (%)</label><input type="number" step="0.1" name="taxRatePercent" value="@Model.Setting.TaxRatePercent" class="form-control" /></div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Save profile</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="rroms-card p-4">
+            <h2 class="h5 mb-3">Operating hours</h2>
+            <form method="post" asp-page-handler="SaveHours">
+                <table class="table table-sm align-middle">
+                    <thead><tr><th>Day</th><th>Open</th><th>Close</th><th>Closed</th></tr></thead>
+                    <tbody>
+                        @foreach (var h in Model.Hours)
+                        {
+                            <tr>
+                                <td>@h.DayOfWeek</td>
+                                <td><input type="hidden" name="hourId" value="@h.Id" /><input type="time" name="openTime" value="@h.OpenTime.ToString(@"hh\:mm")" class="form-control form-control-sm" /></td>
+                                <td><input type="time" name="closeTime" value="@h.CloseTime.ToString(@"hh\:mm")" class="form-control form-control-sm" /></td>
+                                <td class="text-center"><input type="checkbox" name="closedDayIds" value="@h.Id" class="form-check-input" checked="@h.IsClosed" /></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">Save hours</button>
+            </form>
+        </div>
+    </div>
+</div>

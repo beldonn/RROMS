@@ -1,0 +1,102 @@
+@page
+@model RROMS.Pages.Admin.MonitoringModel
+@{
+    ViewData["Title"] = "Monitoring";
+}
+<h1 class="h3 mb-4">Monitoring</h1>
+
+<form method="get" class="rroms-card p-3 mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small">From</label>
+            <input type="date" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">To</label>
+            <input type="date" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Reservation status</label>
+            <select name="ReservationStatusFilter" class="form-select">
+                <option value="">All</option>
+                @foreach (var s in Enum.GetNames(typeof(RROMS.Models.ReservationStatus)))
+                {
+                    <option value="@s" selected="@(Model.ReservationStatusFilter == s)">@s</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-outline-primary w-100">Apply filters</button>
+        </div>
+    </div>
+</form>
+
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#resTab">Reservations (@Model.Reservations.Count)</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ordTab">Orders (@Model.Orders.Count)</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#payTab">Payments</button></li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="resTab">
+        <div class="table-responsive rroms-card p-2">
+            <table class="table rroms-table mb-0 align-middle">
+                <thead><tr><th>Customer</th><th>Date/Time</th><th>Party</th><th>Table</th><th>Status</th></tr></thead>
+                <tbody>
+                    @foreach (var r in Model.Reservations)
+                    {
+                        <tr>
+                            <td>@r.Customer?.FullName</td>
+                            <td>@r.ReservationDateTime.ToString("dd MMM, h:mm tt")</td>
+                            <td>@r.PartySize</td>
+                            <td>@(r.Table?.TableNumber ?? "-")</td>
+                            <td><span class="status-badge status-@r.Status.ToString().ToLower()">@r.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="ordTab">
+        <div class="table-responsive rroms-card p-2">
+            <table class="table rroms-table mb-0 align-middle">
+                <thead><tr><th>#</th><th>Customer</th><th>Date</th><th>Type</th><th>Total</th><th>Status</th></tr></thead>
+                <tbody>
+                    @foreach (var o in Model.Orders)
+                    {
+                        <tr>
+                            <td>#@o.Id</td>
+                            <td>@o.Customer?.FullName</td>
+                            <td>@o.OrderDate.ToLocalTime().ToString("dd MMM, h:mm tt")</td>
+                            <td>@o.OrderType</td>
+                            <td>@o.TotalAmount.ToString("C")</td>
+                            <td><span class="status-badge status-@o.Status.ToString().ToLower()">@o.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="payTab">
+        <div class="table-responsive rroms-card p-2">
+            <table class="table rroms-table mb-0 align-middle">
+                <thead><tr><th>Order #</th><th>Customer</th><th>Amount</th><th>Method</th><th>Status</th><th>Reference</th></tr></thead>
+                <tbody>
+                    @foreach (var o in Model.Orders.Where(o => o.Payment != null))
+                    {
+                        <tr>
+                            <td>#@o.Id</td>
+                            <td>@o.Customer?.FullName</td>
+                            <td>@o.Payment!.Amount.ToString("C")</td>
+                            <td>@o.Payment.Method</td>
+                            <td><span class="status-badge status-@o.Payment.Status.ToString().ToLower()">@o.Payment.Status</span></td>
+                            <td class="small">@o.Payment.TransactionReference</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

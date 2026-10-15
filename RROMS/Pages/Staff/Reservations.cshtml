@@ -1,0 +1,57 @@
+@page
+@model RROMS.Pages.Staff.ReservationsModel
+@{
+    ViewData["Title"] = "Manage Reservations";
+}
+<h1 class="h3 mb-4">Manage Reservations</h1>
+
+<form method="get" class="rroms-card p-3 mb-3 d-flex gap-2 align-items-end">
+    <div>
+        <label class="form-label small">Date</label>
+        <input type="date" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")" class="form-control" onchange="this.form.submit()" />
+    </div>
+</form>
+
+<div class="table-responsive rroms-card p-2">
+    <table class="table rroms-table mb-0 align-middle">
+        <thead><tr><th>Time</th><th>Customer</th><th>Party</th><th>Table</th><th>Requests</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var r in Model.Reservations)
+            {
+                <tr>
+                    <td>@r.ReservationDateTime.ToString("h:mm tt")</td>
+                    <td>@r.Customer?.FullName<div class="small text-muted-warm">@r.Customer?.Email</div></td>
+                    <td>@r.PartySize</td>
+                    <td>@(r.Table?.TableNumber ?? "-")</td>
+                    <td class="small">@r.SpecialRequests</td>
+                    <td><span class="status-badge status-@r.Status.ToString().ToLower()">@r.Status</span></td>
+                    <td class="text-nowrap">
+                        <div class="btn-group">
+                            @if (r.Status == ReservationStatus.Pending)
+                            {
+                                <form method="post" asp-page-handler="Confirm" asp-route-id="@r.Id"><button class="btn btn-sm btn-herb">Confirm</button></form>
+                            }
+                            @if (r.Status == ReservationStatus.Confirmed)
+                            {
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@r.Id" asp-route-status="Seated"><button class="btn btn-sm btn-outline-primary">Seat</button></form>
+                            }
+                            @if (r.Status == ReservationStatus.Seated)
+                            {
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@r.Id" asp-route-status="Completed"><button class="btn btn-sm btn-outline-primary">Complete</button></form>
+                            }
+                            @if (r.Status is ReservationStatus.Confirmed or ReservationStatus.Pending)
+                            {
+                                <form method="post" asp-page-handler="SetStatus" asp-route-id="@r.Id" asp-route-status="NoShow"><button class="btn btn-sm btn-outline-secondary">No-show</button></form>
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@r.Id" onsubmit="return confirm('Cancel this reservation?');"><button class="btn btn-sm btn-outline-danger">Cancel</button></form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!Model.Reservations.Any())
+    {
+        <p class="text-center text-muted-warm p-4 mb-0">No reservations for this date.</p>
+    }
+</div>

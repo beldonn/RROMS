@@ -1,0 +1,26 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace RROMS.Models;
+
+/// <summary>
+/// Knowledge base row for the rule-based assistant. Keywords are comma separated,
+/// lower-case, and scored against the customer's message in ChatbotService.
+/// </summary>
+public class ChatbotFaq
+{
+    public int Id { get; set; }
+
+    [Required, StringLength(200)]
+    public string Question { get; set; } = string.Empty;
+
+    [Required, StringLength(1000)]
+    public string Answer { get; set; } = string.Empty;
+
+    [Required, StringLength(300)]
+    public string Keywords { get; set; } = string.Empty;
+
+    [StringLength(50)]
+    public string Category { get; set; } = "General";
+
+    public bool IsActive { get; set; } = true;
+}

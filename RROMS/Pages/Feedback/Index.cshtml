@@ -1,0 +1,48 @@
+@page
+@model RROMS.Pages.Feedback.IndexModel
+@{
+    ViewData["Title"] = "My Feedback";
+}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h1 class="h3 mb-0">My Feedback</h1>
+    <a asp-page="/Feedback/Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Leave feedback</a>
+</div>
+
+@if (!Model.MyFeedback.Any())
+{
+    <div class="rroms-card p-5 text-center text-muted-warm">You haven't left any feedback yet.</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var f in Model.MyFeedback)
+        {
+            <div class="col-md-6">
+                <div class="rroms-card p-3">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="bi @(i <= f.Rating ? "bi-star-fill" : "bi-star") " style="color:var(--gold);"></i>
+                            }
+                        </div>
+                        <span class="small text-muted-warm">@f.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</span>
+                    </div>
+                    @if (f.Order != null) { <div class="small text-muted-warm mt-1">Order #@f.Order.Id</div> }
+                    @if (f.Reservation != null) { <div class="small text-muted-warm mt-1">Visit on @f.Reservation.ReservationDateTime.ToString("dd MMM yyyy")</div> }
+                    @if (!string.IsNullOrWhiteSpace(f.Comments))
+                    {
+                        <p class="mt-2 mb-0">@f.Comments</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(f.StaffResponse))
+                    {
+                        <div class="mt-2 p-2" style="background:var(--sand); border-radius:6px;">
+                            <div class="small fw-semibold">Response from our team</div>
+                            <div class="small">@f.StaffResponse</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}

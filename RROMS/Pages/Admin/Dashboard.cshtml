@@ -1,0 +1,64 @@
+@page
+@model RROMS.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    var jsData = new
+    {
+        salesLast7Days = Model.Data.SalesLast7Days.Select(d => new { label = d.Date.ToString("MMM d"), revenue = d.Revenue }),
+        reservationsByHour = Model.Data.ReservationsByHour.Select(h => new { label = h.Hour + ":00", count = h.Count }),
+        topMenuItems = Model.Data.TopMenuItems.Select(m => new { label = m.Name, qty = m.QuantitySold }),
+        tableBookingFrequency = Model.Data.TableBookingFrequency.Select(t => new { label = t.TableNumber, count = t.BookingCount })
+    };
+}
+<h1 class="h3 mb-4">Admin Dashboard</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="rroms-stat-card"><div class="stat-value">@Model.Data.TodayReservationsCount</div><div class="stat-label">Reservations today</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="rroms-stat-card"><div class="stat-value">@Model.Data.TodayOrdersCount</div><div class="stat-label">Orders today</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="rroms-stat-card"><div class="stat-value">@Model.Data.TodayRevenue.ToString("C")</div><div class="stat-label">Revenue today</div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="rroms-stat-card"><div class="stat-value">@Model.Data.OrdersInKitchenCount</div><div class="stat-label">Orders in kitchen</div></div>
+    </div>
+</div>
+
+<div class="row g-4 mb-2">
+    <div class="col-lg-7">
+        <div class="rroms-card p-4">
+            <h2 class="h6 mb-3">Revenue - last 7 days</h2>
+            <canvas id="chartSales" height="110"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="rroms-card p-4">
+            <h2 class="h6 mb-3">Reservations by hour</h2>
+            <canvas id="chartReservationsByHour" height="110"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="rroms-card p-4">
+            <h2 class="h6 mb-3">Popular menu items (last 7 days)</h2>
+            <canvas id="chartPopularItems" height="140"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="rroms-card p-4">
+            <h2 class="h6 mb-3">Table booking frequency</h2>
+            <canvas id="chartTableUtilization" height="140"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>window.rromsDashboardData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(jsData));</script>
+    <script src="~/js/dashboard-charts.js" asp-append-version="true"></script>
+}

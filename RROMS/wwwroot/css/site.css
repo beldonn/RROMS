@@ -1,0 +1,251 @@
+/* =========================================================================
+   RROMS design tokens - "Ember & Thyme" identity
+   A warm-ink base, saffron-gold accent, herb-green secondary, wine tertiary.
+   Fraunces (display serif) for headings/prices, Inter (sans) for UI/body.
+   ========================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --ink: #211d19;
+  --ink-soft: #322c26;
+  --paper: #fbf8f4;
+  --panel: #ffffff;
+  --sand: #e9e1d3;
+  --sand-dark: #d8cbb0;
+  --gold: #bd8b2e;
+  --gold-dark: #8f691f;
+  --herb: #3e5641;
+  --herb-dark: #2c3f30;
+  --wine: #6b2737;
+  --wine-dark: #501c29;
+  --muted: #6f655a;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --radius: 6px;
+  --shadow-card: 0 1px 2px rgba(33, 29, 25, 0.08), 0 8px 24px -12px rgba(33, 29, 25, 0.18);
+
+  --bs-primary: var(--gold);
+  --bs-primary-rgb: 189, 139, 46;
+  --bs-body-font-family: var(--font-body);
+  --bs-body-color: var(--ink);
+  --bs-body-bg: var(--paper);
+  --bs-link-color: var(--gold-dark);
+  --bs-link-hover-color: var(--gold);
+}
+
+html, body { background: var(--paper); color: var(--ink); font-family: var(--font-body); }
+h1, h2, h3, h4, .display-font { font-family: var(--font-display); color: var(--ink); }
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
+a { text-decoration: none; }
+.text-muted-warm { color: var(--muted) !important; }
+main.container, main.container-fluid { padding-top: 1.75rem; padding-bottom: 3rem; }
+
+/* ---------------- Buttons ---------------- */
+.btn-primary {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--gold-dark);
+  border-color: var(--gold-dark);
+  color: #fff;
+}
+.btn-outline-primary {
+  color: var(--gold-dark);
+  border-color: var(--gold);
+}
+.btn-outline-primary:hover {
+  background-color: var(--gold);
+  border-color: var(--gold);
+}
+.btn-herb { background-color: var(--herb); border-color: var(--herb); color: #fff; }
+.btn-herb:hover { background-color: var(--herb-dark); border-color: var(--herb-dark); color: #fff; }
+.btn-wine { background-color: var(--wine); border-color: var(--wine); color: #fff; }
+.btn-wine:hover { background-color: var(--wine-dark); border-color: var(--wine-dark); color: #fff; }
+.btn:focus-visible, a:focus-visible, input:focus-visible, .form-control:focus, .form-select:focus {
+  outline: 3px solid rgba(189, 139, 46, 0.45);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+/* ---------------- Navbar ---------------- */
+.rroms-navbar {
+  background: var(--ink);
+  padding: 0.65rem 0;
+}
+.rroms-navbar .navbar-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: var(--paper);
+}
+.rroms-navbar .navbar-brand span { color: var(--gold); }
+.rroms-navbar .nav-link {
+  color: #d8d1c6;
+  font-weight: 500;
+  font-size: 0.94rem;
+  margin: 0 0.15rem;
+  border-radius: var(--radius);
+  padding: 0.45rem 0.7rem !important;
+}
+.rroms-navbar .nav-link:hover, .rroms-navbar .nav-link.active {
+  color: #fff;
+  background: rgba(255,255,255,0.08);
+}
+.rroms-navbar .navbar-toggler { border-color: rgba(255,255,255,0.3); }
+.rroms-badge-role {
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #fff;
+  vertical-align: middle;
+}
+
+/* ---------------- Hero ---------------- */
+.rroms-hero {
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-soft) 100%);
+  color: var(--paper);
+  padding: 4.5rem 0 5rem;
+  position: relative;
+  overflow: hidden;
+}
+.rroms-hero h1 {
+  color: #fff;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1.08;
+  max-width: 16ch;
+}
+.rroms-hero p.lead { color: #cfc6b8; max-width: 46ch; font-size: 1.1rem; }
+.rroms-hero .rroms-plate {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.9;
+}
+@media (max-width: 991px) { .rroms-hero .rroms-plate { display: none; } }
+
+/* ---------------- Cards / panels ---------------- */
+.rroms-card {
+  background: var(--panel);
+  border: 1px solid var(--sand);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+.rroms-stat-card {
+  background: var(--panel);
+  border: 1px solid var(--sand);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+}
+.rroms-stat-card .stat-value { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; color: var(--ink); }
+.rroms-stat-card .stat-label { color: var(--muted); font-size: 0.82rem; text-transform: none; }
+
+/* ---------------- Menu ---------------- */
+.menu-item-card {
+  background: var(--panel);
+  border: 1px solid var(--sand);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  height: 100%;
+  transition: border-color 0.15s ease;
+}
+.menu-item-card:hover { border-color: var(--gold); }
+.menu-item-card .price {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--gold-dark);
+  font-size: 1.15rem;
+}
+.menu-item-card .item-name { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; }
+.menu-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--sand-dark);
+  color: var(--muted);
+  margin-right: 0.25rem;
+}
+.menu-tag.veg { border-color: var(--herb); color: var(--herb); }
+.menu-tag.spicy { border-color: var(--wine); color: var(--wine); }
+
+/* ---------------- Status badges ---------------- */
+.status-badge { font-size: 0.76rem; padding: 0.3rem 0.6rem; border-radius: 999px; font-weight: 600; }
+.status-pending, .status-placed { background: #f3e6c8; color: #7a5a12; }
+.status-confirmed, .status-preparing { background: #ddeadd; color: var(--herb-dark); }
+.status-seated, .status-readytoserve { background: #dde6f2; color: #2c4a6e; }
+.status-completed, .status-served { background: #e3ede3; color: var(--herb-dark); }
+.status-cancelled, .status-noshow, .status-failed { background: #f3dcdc; color: var(--wine-dark); }
+.status-paid { background: #ddeadd; color: var(--herb-dark); }
+.status-refunded { background: #eee2d0; color: #7a5a12; }
+
+/* ---------------- Tables ---------------- */
+.table.rroms-table thead { background: var(--ink); color: #fff; }
+.table.rroms-table thead th { border: none; font-weight: 500; font-size: 0.82rem; }
+.table.rroms-table td { vertical-align: middle; }
+
+/* ---------------- Footer ---------------- */
+.rroms-footer { background: var(--ink); color: #c9c1b4; padding: 2.25rem 0; margin-top: 4rem; font-size: 0.9rem; }
+.rroms-footer a { color: #e7dfd0; }
+
+/* ---------------- Auth pages ---------------- */
+.auth-card { max-width: 440px; margin: 2.5rem auto; }
+
+/* ---------------- Chatbot widget ---------------- */
+#rroms-chat-toggle {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  box-shadow: 0 6px 18px rgba(33,29,25,0.28);
+  z-index: 1040;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#rroms-chat-toggle:hover { background: var(--gold-dark); }
+#rroms-chat-panel {
+  position: fixed;
+  bottom: 90px;
+  right: 22px;
+  width: 320px;
+  max-width: 90vw;
+  height: 420px;
+  background: var(--panel);
+  border: 1px solid var(--sand);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(33,29,25,0.28);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1040;
+}
+#rroms-chat-panel.open { display: flex; }
+#rroms-chat-header { background: var(--ink); color: #fff; padding: 0.75rem 1rem; font-family: var(--font-display); font-weight: 600; }
+#rroms-chat-messages { flex: 1; overflow-y: auto; padding: 0.75rem; font-size: 0.88rem; background: var(--paper); }
+.chat-bubble { padding: 0.5rem 0.7rem; border-radius: 10px; margin-bottom: 0.5rem; max-width: 85%; line-height: 1.35; }
+.chat-bubble.bot { background: #fff; border: 1px solid var(--sand); }
+.chat-bubble.user { background: var(--gold); color: #fff; margin-left: auto; }
+#rroms-chat-form { display: flex; border-top: 1px solid var(--sand); }
+#rroms-chat-input { flex: 1; border: none; padding: 0.6rem 0.75rem; font-size: 0.88rem; }
+#rroms-chat-input:focus { outline: none; }
+#rroms-chat-form button { border: none; background: var(--gold); color: #fff; padding: 0 1rem; }
+
+/* ---------------- Utility ---------------- */
+.rroms-divider { border: none; border-top: 1px solid var(--sand); margin: 2rem 0; }
+.rroms-section-eyebrow { color: var(--gold-dark); font-weight: 600; font-size: 0.85rem; }
